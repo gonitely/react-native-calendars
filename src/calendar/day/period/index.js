@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 //import _ from 'lodash';
 import {
@@ -27,14 +27,18 @@ class Day extends Component {
 
   constructor(props) {
     super(props);
-    this.theme = {...defaultStyle, ...(props.theme || {})};
+    this.theme = { ...defaultStyle, ...(props.theme || {}) };
     this.style = styleConstructor(props.theme);
     this.markingStyle = this.getDrawingStyle(props.marking || []);
     this.onDayPress = this.onDayPress.bind(this);
   }
 
   onDayPress() {
-    this.props.onPress(this.props.date);
+    this.props.onPress({
+      date: this.props.date,
+      state: this.props.state,
+      marking: this.props.marking,
+    });
   }
 
   shouldComponentUpdate(nextProps) {
@@ -54,7 +58,7 @@ class Day extends Component {
   }
 
   getDrawingStyle(marking) {
-    const defaultStyle = {textStyle: {}};
+    const defaultStyle = { textStyle: {} };
     if (!marking) {
       return defaultStyle;
     }
@@ -125,8 +129,9 @@ class Day extends Component {
     }
 
     if (this.props.marking) {
+      const marking = this.props.marking;
       containerStyle.push({
-        borderRadius: 17
+        borderRadius: 17,
       });
 
       const flags = this.markingStyle;
@@ -143,17 +148,19 @@ class Day extends Component {
         rightFillerStyle.backgroundColor = flags.rightFillerStyle;
       }
 
-      if (flags.startingDay && !flags.endingDay) {
+      if (flags.startingDay && !flags.endingDay &&
+        !marking.isSharingDay && !marking.isSharingDayLeft && !marking.isSharingDayRight) {
         leftFillerStyle = {
-          backgroundColor: this.theme.calendarBackground
+          backgroundColor: this.theme.calendarBackground,
         };
         rightFillerStyle = {
-          backgroundColor: flags.startingDay.color
+          backgroundColor: flags.startingDay.color,
         };
         containerStyle.push({
-          backgroundColor: flags.startingDay.color
+          backgroundColor: flags.startingDay.color,
         });
-      } else if (flags.endingDay && !flags.startingDay) {
+      } else if (flags.endingDay && !flags.startingDay &&
+        !marking.isSharingDay && !marking.isSharingDayLeft && !marking.isSharingDayRight) {
         rightFillerStyle = {
           backgroundColor: this.theme.calendarBackground
         };
@@ -163,12 +170,14 @@ class Day extends Component {
         containerStyle.push({
           backgroundColor: flags.endingDay.color
         });
-      } else if (flags.day) {
-        leftFillerStyle = {backgroundColor: flags.day.color};
-        rightFillerStyle = {backgroundColor: flags.day.color};
+      } else if (flags.day &&
+        !marking.isSharingDay && !marking.isSharingDayLeft && !marking.isSharingDayRight) {
+        leftFillerStyle = { backgroundColor: flags.day.color };
+        rightFillerStyle = { backgroundColor: flags.day.color };
         // #177 bug
-        fillerStyle = {backgroundColor: flags.day.color};
-      } else if (flags.endingDay && flags.startingDay) {
+        fillerStyle = { backgroundColor: flags.day.color };
+      } else if (flags.endingDay && flags.startingDay &&
+        !marking.isSharingDay && !marking.isSharingDayLeft && !marking.isSharingDayRight) {
         rightFillerStyle = {
           backgroundColor: this.theme.calendarBackground
         };
@@ -178,12 +187,81 @@ class Day extends Component {
         containerStyle.push({
           backgroundColor: flags.endingDay.color
         });
+      } else if (marking.isSharingDay) {
+        if (marking.isSharingDayLeft && !marking.isSharingDayRight) {
+          leftFillerStyle = {
+            backgroundColor: marking.leftColor,
+            borderRadius: 20,
+            marginLeft: -11,
+            marginRight: 9,
+          };
+        } else if (marking.isSharingDayRight && !marking.isSharingDayLeft) {
+          rightFillerStyle = {
+            backgroundColor: marking.rightColor,
+            borderRadius: 20,
+            alignSelf: 'center',
+            marginRight: -11,
+            marginLeft: 9,
+          };
+        } else if (marking.isSharingDayRight && marking.isSharingDayLeft) {
+          leftFillerStyle = {
+            backgroundColor: marking.leftColor,
+            borderRadius: 20,
+            marginLeft: -14,
+          };
+          rightFillerStyle = {
+            backgroundColor: marking.rightColor,
+            borderRadius: 20,
+            alignSelf: 'center',
+            marginRight: -14,
+          };
+        }
+      } else if (!marking.isSharingDay) {
+        if (marking.isSharingDayLeft && !marking.isSharingDayRight) {
+          leftFillerStyle = {
+            backgroundColor: marking.leftColor,
+            borderRadius: 20,
+            marginLeft: -11,
+            marginRight: 9,
+          };
+          containerStyle.push({
+            backgroundColor: marking.color
+          });
+        } else if (marking.isSharingDayRight && !marking.isSharingDayLeft) {
+          rightFillerStyle = {
+            backgroundColor: marking.rightColor,
+            borderRadius: 20,
+            alignSelf: 'center',
+            marginRight: -11,
+            marginLeft: 9,
+          };
+          containerStyle.push({
+            backgroundColor: marking.color
+          });
+        } else if (marking.isSharingDayRight && marking.isSharingDayLeft) {
+          leftFillerStyle = {
+            backgroundColor: marking.leftColor,
+            borderRadius: 20,
+            marginLeft: -11,
+            marginRight: 9,
+          };
+          rightFillerStyle = {
+            backgroundColor: marking.rightColor,
+            borderRadius: 20,
+            alignSelf: 'center',
+            marginRight: -11,
+            marginLeft: 9,
+          };
+          containerStyle.push({
+            backgroundColor: marking.color
+          });
+        }
       }
 
       fillers = (
         <View style={[this.style.fillers, fillerStyle]}>
-          <View style={[this.style.leftFiller, leftFillerStyle]}/>
-          <View style={[this.style.rightFiller, rightFillerStyle]}/>
+          <View style={[this.style.leftFiller, leftFillerStyle]} />
+          <View style={[this.style.rightFiller, rightFillerStyle]} />
         </View>
       );
     }

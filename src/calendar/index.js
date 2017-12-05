@@ -62,10 +62,12 @@ class Calendar extends Component {
     monthFormat: PropTypes.string,
     // Disables changing month when click on days of other months (when hideExtraDays is false). Default = false
     disableMonthChange: PropTypes.bool,
-    //Hide day names. Default = false
+    // Hide day names. Default = false
     hideDayNames: PropTypes.bool,
-    //Disable days by default. Default = false
-    disabledByDefault: PropTypes.bool
+    // Disable days by default. Default = false
+    disabledByDefault: PropTypes.bool,
+    // Top month press
+    onMonthPress: PropTypes.func,
   };
 
   constructor(props) {
@@ -115,8 +117,8 @@ class Calendar extends Component {
     });
   }
 
-  pressDay(date) {
-    const day = parseDate(date);
+  pressDay(dateContent) {
+    const day = parseDate(dateContent.date || dateContent);
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
     if (!(minDate && !dateutils.isGTE(day, minDate)) && !(maxDate && !dateutils.isLTE(day, maxDate))) {
@@ -125,7 +127,11 @@ class Calendar extends Component {
         this.updateMonth(day);
       }
       if (this.props.onDayPress) {
-        this.props.onDayPress(xdateToData(day));
+        this.props.onDayPress({
+          date: xdateToData(day),
+          state: dateContent.state,
+          marking: dateContent.marking,
+        });
       }
     }
   }
@@ -236,6 +242,7 @@ class Calendar extends Component {
           renderArrow={this.props.renderArrow}
           monthFormat={this.props.monthFormat}
           hideDayNames={this.props.hideDayNames}
+          onMonthPress={this.props.onMonthPress}
         />
         {weeks}
       </View>);
