@@ -68,8 +68,6 @@ class Calendar extends Component {
     disabledByDefault: PropTypes.bool,
     // Top month press
     onMonthPress: PropTypes.func,
-    onLeftArrowPress: PropTypes.func,
-    onRightArrowPress: PropTypes.func,
   };
 
   constructor(props) {
@@ -245,8 +243,6 @@ class Calendar extends Component {
           monthFormat={this.props.monthFormat}
           hideDayNames={this.props.hideDayNames}
           onMonthPress={this.props.onMonthPress}
-          leftArrowPress={this.props.onLeftArrowPress}
-          rightArrowPress={this.props.onRightArrowPress}
         />
         {weeks}
       </View>);
