@@ -1,5 +1,5 @@
 {
-  "name": "react-native-calendars",
+  "name": "rn-calendars-improved",
   "version": "1.14.2",
   "main": "src/index.js",
   "description": "React Native Calendar Components",
@@ -9,12 +9,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wix/react-native-calendars"
+    "url": ""
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "author": "Wix.com",
   "license": "MIT",
   "dependencies": {
     "prop-types": "^15.5.10",
