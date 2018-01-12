@@ -30,19 +30,17 @@ class CalendarHeader extends Component {
   constructor(props) {
     super(props);
     this.style = styleConstructor(props.theme);
-    this.rightArrowOnPress = this.rightArrowOnPress.bind(this);
-    this.leftArrowOnPress = this.leftArrowOnPress.bind(this);
   }
 
-  rightArrowOnPress() {
+  rightArrowOnPress = () => {
     this.props.addMonth(1);
     this.props.rightArrowPress();
-  }
+  };
 
-  leftArrowOnPress() {
+  leftArrowOnPress = () => {
     this.props.addMonth(-1);
     this.props.leftArrowPress();
-  }
+  };
 
   shouldComponentUpdate(nextProps) {
     if (
